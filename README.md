@@ -6,3 +6,4 @@ Have now figured out how to do the following:
 - push updates to GitHub repo
 - publish code to custom domain owned through GoDaddy
 - install and use GitHub Copilot in Visual Studio Code
+- connect Google Analytics
