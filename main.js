@@ -8,20 +8,25 @@ let chunks = [];
 
 async function postData(url = "", data = {}) {
   const isFormData = data instanceof FormData;
-  const response = await fetch(`http://127.0.0.1:5000${url}`, {
-    method: "POST",
-    headers: !isFormData
-      ? {
-          "Content-Type": "application/json"
-        }
-      : {},
-    body: isFormData ? data : JSON.stringify(data)
-  });
+  try {
+    const response = await fetch(`http://127.0.0.1:5000${url}`, {
+      method: "POST",
+      headers: !isFormData
+        ? {
+            "Content-Type": "application/json"
+          }
+        : {},
+      body: isFormData ? data : JSON.stringify(data)
+    });
 
-  // Log the response to the console
-  console.log(`Response from ${url}:`, await response.clone().json());
+    // Log the response to the console
+    console.log(`Response from ${url}:`, await response.clone().json());
 
-  return await response.json();
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching data from ${url}:`, error);
+    throw error;
+  }
 }
 
 async function startRecording() {
