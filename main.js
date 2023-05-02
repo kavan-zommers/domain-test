@@ -9,7 +9,7 @@ let chunks = [];
 async function postData(url = "", data = {}) {
   const isFormData = data instanceof FormData;
   try {
-    const response = await fetch(`http://127.0.0.1:5000${url}`, {
+    const response = await fetch(`http://127.0.0.1:8000${url}`, {
       method: "POST",
       headers: !isFormData
         ? {
