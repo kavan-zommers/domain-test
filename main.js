@@ -32,6 +32,9 @@ recordButton.addEventListener("click", async () => {
     });
 
     mediaRecorder.addEventListener("stop", async () => {
+      // Stop the media stream tracks
+      stream.getTracks().forEach((track) => track.stop());
+
       const audioBlob = new Blob(recordedChunks, { type: "audio/webm" });
       const formData = new FormData();
       formData.append("audio", audioBlob);
@@ -53,3 +56,4 @@ recordButton.addEventListener("click", async () => {
     recordedChunks = [];
   }
 });
+
