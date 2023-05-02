@@ -7,7 +7,7 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-OPENAI_API_KEY = "your_openai_api_key"
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
 
 @app.route("/transcribe", methods=["POST"])
