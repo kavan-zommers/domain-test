@@ -10,6 +10,7 @@ WHISPER_API_BASE_URL = "https://api.openai.com/v1/whisper/speech"
 GPT_API_BASE_URL = "https://api.openai.com/v1/engines/davinci-codex/completions"
 
 app = Flask(__name__)
+app.config["DEBUG"] = False
 CORS(app)
 
 def transcribe_audio(audio_file):
