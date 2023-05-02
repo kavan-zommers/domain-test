@@ -13,7 +13,7 @@ openai.api_key = OPENAI_API_KEY
 @app.route("/transcribe", methods=["POST"])
 def transcribe():
     audio_file = request.files["audio"]
-    response = openai.Speech.transcribe(audio_file)
+    response = openai.Audio.transcribe("whisper-1", audio_file)
     return jsonify({"text": response.data["text"]})
 
 @app.route("/complete_text", methods=["POST"])
