@@ -9,13 +9,20 @@ let mediaRecorder;
 let recordedChunks = [];
 
 async function postData(url = "", data = {}) {
+  const isFormData = data instanceof FormData;
   const response = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(data)
+    headers: !isFormData
+      ? {
+          "Content-Type": "application/json"
+        }
+      : {},
+    body: isFormData ? data : JSON.stringify(data)
   });
+
+  // Log the response to the console
+  console.log(`Response from ${url}:`, await response.clone().json());
+
   return await response.json();
 }
 
