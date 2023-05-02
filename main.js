@@ -10,7 +10,7 @@ let recordedChunks = [];
 
 async function postData(url = "", data = {}) {
   const isFormData = data instanceof FormData;
-  const response = await fetch(url, {
+  const response = await fetch(`http://127.0.0.1:5000${url}`, {
     method: "POST",
     headers: !isFormData
       ? {
@@ -25,6 +25,7 @@ async function postData(url = "", data = {}) {
 
   return await response.json();
 }
+
 
 recordButton.addEventListener("click", async () => {
   if (!isRecording) {
