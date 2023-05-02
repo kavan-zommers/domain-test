@@ -1,12 +1,10 @@
 const recordButton = document.getElementById("recordButton");
-const status = document.getElementById("status");
-const transcription = document.getElementById("transcription");
-const gptResponse = document.getElementById("gptResponse");
-const recordingStatus = document.getElementById("recordingStatus");
+const statusElement = document.getElementById("status");
+const transcriptionElement = document.getElementById("transcription");
+const responseElement = document.getElementById("response");
 
-let isRecording = false;
 let mediaRecorder;
-let recordedChunks = [];
+let chunks = [];
 
 async function postData(url = "", data = {}) {
   const isFormData = data instanceof FormData;
@@ -26,40 +24,57 @@ async function postData(url = "", data = {}) {
   return await response.json();
 }
 
-
-recordButton.addEventListener("click", async () => {
-  if (!isRecording) {
-    isRecording = true;
-    recordButton.textContent = "Stop Recording";
+async function startRecording() {
+  try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
     mediaRecorder = new MediaRecorder(stream);
     mediaRecorder.start();
 
-    mediaRecorder.addEventListener("stop", async () => {
-      // Stop the media stream tracks
-      stream.getTracks().forEach((track) => track.stop());
-    
-      recordingStatus.textContent = "Audio has been successfully recorded"; // Add this line
-      const audioBlob = new Blob(recordedChunks, { type: "audio/webm" });
+    mediaRecorder.ondataavailable = (e) => {
+      chunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      statusElement.textContent = "Processing...";
+
+      const audioBlob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
       const formData = new FormData();
-      formData.append("audio", audioBlob);
-      status.textContent = "Processing";
-    
-      const transcriptionResult = await postData("/transcribe", formData);
-      transcription.textContent = transcriptionResult.text;
-    
-      const gptResult = await postData("/complete_text", {
-        text: transcriptionResult.text
-      });
-      gptResponse.textContent = gptResult.response;
-      status.textContent = "";
-    });
-  } else {
-    isRecording = false;
-    recordButton.textContent = "Record";
+      formData.append("audio", audioBlob, "audio.ogg");
+
+      try {
+        const transcriptionResponse = await postData("/transcribe", formData);
+        transcriptionElement.textContent = transcriptionResponse.text;
+
+        const completionResponse = await postData("/complete_text", {
+          text: transcriptionResponse.text,
+        });
+        responseElement.textContent = completionResponse.response;
+
+        statusElement.textContent = "Audio has been successfully recorded";
+      } catch (error) {
+        statusElement.textContent = "Error processing audio";
+        console.error("Error processing audio:", error);
+      }
+    };
+
+    recordButton.textContent = "Stop Recording";
+  } catch (error) {
+    console.error("Error starting recording:", error);
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder) {
     mediaRecorder.stop();
-    recordedChunks = [];
+    chunks = [];
+    recordButton.textContent = "Record";
+  }
+}
+
+recordButton.addEventListener("click", () => {
+  if (recordButton.textContent === "Record") {
+    startRecording();
+  } else {
+    stopRecording();
   }
 });
-
