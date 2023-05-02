@@ -66,6 +66,8 @@ async function startRecording() {
 function stopRecording() {
   if (mediaRecorder) {
     mediaRecorder.stop();
+    // Stop and release the MediaStream tracks
+    mediaRecorder.stream.getTracks().forEach(track => track.stop());
     chunks = [];
     recordButton.textContent = "Record";
   }
