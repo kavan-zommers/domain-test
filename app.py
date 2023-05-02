@@ -11,7 +11,8 @@ GPT_API_BASE_URL = "https://api.openai.com/v1/engines/davinci-codex/completions"
 
 app = Flask(__name__)
 app.config["DEBUG"] = False
-CORS(app)
+CORS(app, resources={r"/*": {"origins": ["https://www.kavanzommers.com", "http://127.0.0.1:5000"]}})
+
 
 def transcribe_audio(audio_file):
     headers = {
